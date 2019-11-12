@@ -87,5 +87,13 @@ var_dump($result);
 $result = $service->call('products/experius-example-product');
 var_dump($result);
 
+$dataArray = [
+    'searchCriteria' => [
+        'pageSize' => 10
+    ]
+];
+
+$result = $service->call('products', $dataArray);
+var_dump($result);
 
 ```
