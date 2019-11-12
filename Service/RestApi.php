@@ -106,6 +106,7 @@ class RestApi
      */
     protected function getDefaultHeaders()
     {
+        $headers = [];
         if ($this->token) {
             $headers[] = 'Authorization: Bearer ' . $this->token;
             $headers['realtime-stock'] = 'Disable-RealtimeStock: true';
