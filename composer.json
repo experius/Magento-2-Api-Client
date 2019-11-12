@@ -1,0 +1,19 @@
+{
+  "name": "experius/magento2apiclient",
+  "description": "",
+  "type": "library",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Mr. Lewis",
+      "email": "lewis@experius.nl"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Experius\\Magento2ApiClient\\": ""
+    }
+  }
+}
