@@ -67,9 +67,6 @@ class SoapApi
      */
     public function init()
     {
-        ini_set('soap.wsdl_cache_enabled',0);
-        ini_set('soap.wsdl_cache_ttl',0);
-
         if ($this->validateConfig()) {
             $this->getToken();
         }
@@ -162,12 +159,8 @@ class SoapApi
      */
     public function getUrl()
     {
-        $storeCode = '';
-        if ($this->getStoreCode() != '') {
-            $storeCode = $this->getStoreCode() . '/';
-        }
-        $this->url .= '/soap/default?wsdl&services=';
-        return str_replace('%storecode/', $storeCode, $this->url);
+        $this->url .= '/soap/'. $this->getStoreCode() .'?wsdl&services=';
+        return $this->url;
     }
 
     /**
