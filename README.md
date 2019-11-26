@@ -2,11 +2,11 @@
 
     `experius/magento2apiclient`
     
-This is a simple PHP lib to easy create test Rest API Calls with Magento.
+This is a simple PHP SDK lib to easy create Rest or Soap API Calls to Magento.
 
-## Example usage:
+## REST Example usage:
 
-```
+```php
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
@@ -96,4 +96,35 @@ $dataArray = [
 $result = $service->call('products', $dataArray);
 var_dump($result);
 
+```
+
+## SOAP Example usage:
+
+```php
+<?php
+$service = new \Experius\Magento2ApiClient\Service\SoapApi();
+$service->setUsername('username');
+$service->setPassword('password');
+$service->setUrl('https://www.example.com');
+
+$service->setStoreCode('default');
+$service->init();
+
+$serviceArgs = array('searchCriteria'=>
+    array('filterGroups' =>
+        array ('filters' =>
+            array('field' =>'increment_id',
+                'value' => '000000002' ,
+                'condition_type' => 'eq')
+        )
+    )
+);
+
+$result = $service->call(
+    'salesOrderRepositoryV1',
+    'salesOrderRepositoryV1GetList',
+    $serviceArgs
+);
+
+print_r($result);
 ```
