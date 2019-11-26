@@ -105,7 +105,7 @@ var_dump($result);
 $service = new \Experius\Magento2ApiClient\Service\SoapApi();
 $service->setUsername('username');
 $service->setPassword('password');
-$service->setUrl('https://www.example.com/soap/default?wsdl&services=');
+$service->setUrl('https://www.example.com');
 
 $service->setStoreCode('default');
 $service->init();

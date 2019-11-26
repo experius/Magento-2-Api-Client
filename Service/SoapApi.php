@@ -125,7 +125,7 @@ class SoapApi
     {
         if (!$this->token) {
             $request = new \SoapClient(
-                "https://magento233.local.xpdev.nl/soap/default?wsdl&services=integrationAdminTokenServiceV1",
+                $this->url . "integrationAdminTokenServiceV1",
                 $this->getOptions()
             );
 
@@ -166,6 +166,7 @@ class SoapApi
         if ($this->getStoreCode() != '') {
             $storeCode = $this->getStoreCode() . '/';
         }
+        $this->url .= '/soap/default?wsdl&services=';
         return str_replace('%storecode/', $storeCode, $this->url);
     }
 
