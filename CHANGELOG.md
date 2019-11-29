@@ -1,10 +1,16 @@
+## 1.2.1 (2019-11-26)
+
+[View Release](git@github.com:experius/Magento-2-Api-Client.git/commits/tag/1.2.1)
+
+*  [TASK] Added multistore support *(dheesbeen)*
+
+
 ## 1.2.0 (2019-11-26)
 
 [View Release](git@github.com:experius/Magento-2-Api-Client.git/commits/tag/1.2.0)
 
 *  [TASK] Added Soap Lib *(dheesbeen)*
 *  [TASK] Corrected Soap Lib. Removed fixed url from admintoken call *(dheesbeen)*
-*  [TASK] Added multistore support *(dheesbeen)*
 
 
 ## 1.1.0 (2019-11-12)
