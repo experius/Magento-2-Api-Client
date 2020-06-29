@@ -110,15 +110,21 @@ $service->setUrl('https://www.example.com');
 $service->setStoreCode('default');
 $service->init();
 
-$serviceArgs = array('searchCriteria'=>
-    array('filterGroups' =>
-        array ('filters' =>
-            array('field' =>'increment_id',
-                'value' => '000000002' ,
-                'condition_type' => 'eq')
-        )
-    )
-);
+$serviceArgs = [
+    'searchCriteria' => [
+        'filterGroups' => [
+            [
+                'filters' => [
+                        [
+                            'field' => 'increment_id',
+                            'value' => '000000002',
+                            'condition_type' => 'eq'
+                        ]
+                    ]
+            ]
+        ]
+    ]
+];
 
 $result = $service->call(
     'salesOrderRepositoryV1',
