@@ -1,4 +1,4 @@
-# Experius Magento 2 Api Client
+# Experius Magento 2 Api SDK Client
 
     `experius/magento2apiclient`
     
@@ -130,6 +130,31 @@ $result = $service->call(
     'salesOrderRepositoryV1',
     'salesOrderRepositoryV1GetList',
     $serviceArgs
+);
+
+print_r($result);
+
+$productData = array(
+    'sku'               => 'ZZ-TEST 2',
+    'name'              => 'testproduct2',
+    'visibility'        => 4,
+    'typeId'           => 'simple',
+    'price'             => 45,
+    'status'            => 1,
+    'attributeSetId'  => '4',
+    'weight'            => 1,
+    'customAttributes' => [
+        [
+            "attributeCode" => "<your_customer_attribute_code>",
+            "value" => "1"
+        ]
+    ]
+);
+
+$result = $service->call(
+    'catalogProductRepositoryV1',
+    'catalogProductRepositoryV1save',
+    ['product' => $productData]
 );
 
 print_r($result);
