@@ -87,14 +87,19 @@ class RestApi
     }
 
     /**
+     * Accepted: admin or customer.
+     *
+     * @param string $integration
      * @return bool|mixed
      * @throws \Exception
      */
-    protected function getToken()
+    protected function getToken($integration)
     {
-        if (!$this->token) {
+        $integrations = ['admin', 'customer'];
+
+        if (!$this->token && in_array($integration, $integrations)) {
             $data = array("username" => $this->getUsername(), "password" => $this->getPassword());
-            if ($token = $this->call('integration/admin/token', $data, 'POST')) {
+            if ($token = $this->call("integration/$integration/token", $data, "POST")) {
                 $this->token = $token;
             }
         }
