@@ -8,11 +8,22 @@ This is a simple PHP SDK lib to easy create Rest or Soap API Calls to Magento.
 
 ```php
 <?php
+
+// Git clone
+// require_once ('Service/RestApi.php');
+
+// Install via Composer
 require __DIR__ . '/vendor/autoload.php';
 
 $service = new \Experius\Magento2ApiClient\Service\RestApi();
-$service->setUsername('username');
-$service->setPassword('password');
+
+// Integration Access Token
+$service->setToken('12341234123423423134123413243124');
+
+// Admin User Token Integration 
+//$service->setUsername('username');
+//$service->setPassword('password');rd');
+
 $service->setUrl('https://www.example.com/index.php/rest/%storecode/V1/');
 
 // OPTIONAL > default = all
@@ -102,9 +113,22 @@ var_dump($result);
 
 ```php
 <?php
+
+// Git clone
+// require_once ('Service/SoapApi.php');
+
+// Install via Composer
+require __DIR__ . '/vendor/autoload.php';
+
 $service = new \Experius\Magento2ApiClient\Service\SoapApi();
-$service->setUsername('username');
-$service->setPassword('password');
+
+// Integration Access Token
+$service->setToken('12341234123423423134123413243124');
+
+// Admin User Token Integration 
+//$service->setUsername('username');
+//$service->setPassword('password');
+
 $service->setUrl('https://www.example.com');
 
 $service->setStoreCode('default');

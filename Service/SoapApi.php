@@ -46,7 +46,8 @@ class SoapApi
         $options = [
             "soap_version" => SOAP_1_2,
             "stream_context" => $this->getContext(),
-            'cache_wsdl' => WSDL_CACHE_NONE
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'trace' => 1
         ];
 
         $this->options = $options;
@@ -79,13 +80,14 @@ class SoapApi
     protected function validateConfig()
     {
         $missingConfig = array();
-        if (!$this->getUsername()) {
+        if (!$this->getUsername() && !$this->token) {
             $missingConfig[] = 'username';
-        } elseif (!$this->getPassword()) {
+        } elseif (!$this->getPassword() && !$this->token) {
             $missingConfig[] = 'password';
-        } elseif (!$this->getUrl()) {
+        } elseif (!$this->url) {
             $missingConfig[] = 'url';
         }
+
         if (!empty($missingConfig)) {
             $missingConfigString = implode(', ', $missingConfig);
             throw new \Exception("One or more config values are missing: {$missingConfigString}");
@@ -113,6 +115,16 @@ class SoapApi
         }
 
         return stream_context_create($context);
+    }
+
+    /**
+     * @param $token
+     * @return $this
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+        return $this;
     }
 
     /**
@@ -216,12 +228,18 @@ class SoapApi
     {
         $wsdlUrl = $this->getUrl() . $wsdlEndPoint;
 
+        echo $wsdlUrl;
+
         $soapClient = new \SoapClient(
             $wsdlUrl,
             $this->getOptions()
         );
 
         $result = $soapClient->$method($data);
+
+        var_dump($soapClient->__getLastRequest());
+
+        echo "test";
 
         return $result;
     }

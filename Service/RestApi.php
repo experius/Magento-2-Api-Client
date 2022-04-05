@@ -87,13 +87,23 @@ class RestApi
     }
 
     /**
+     * @param $token
+     * @return $this
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    /**
      * Accepted: admin or customer.
      *
      * @param string $integration
      * @return bool|mixed
      * @throws \Exception
      */
-    protected function getToken($integration)
+    protected function getToken($integration = 'admin')
     {
         $integrations = ['admin', 'customer'];
 
@@ -136,6 +146,8 @@ class RestApi
         $handle = curl_init();
         $this->apiCallUrl = trim($this->getUrl(), '/') . '/' . ltrim($url, '/');
         $this->headers = $this->getDefaultHeaders();
+
+        echo $this->apiCallUrl;
 
         switch ($postType) {
             case 'GET':
@@ -192,11 +204,11 @@ class RestApi
     protected function validateConfig()
     {
         $missingConfig = array();
-        if (!$this->getUsername()) {
+        if (!$this->getUsername() && !$this->token) {
             $missingConfig[] = 'username';
-        } elseif (!$this->getPassword()) {
+        } elseif (!$this->getPassword() && !$this->token) {
             $missingConfig[] = 'password';
-        } elseif (!$this->getUrl()) {
+        } elseif (!$this->url) {
             $missingConfig[] = 'url';
         }
         if (!empty($missingConfig)) {
