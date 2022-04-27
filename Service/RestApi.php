@@ -147,8 +147,6 @@ class RestApi
         $this->apiCallUrl = trim($this->getUrl(), '/') . '/' . ltrim($url, '/');
         $this->headers = $this->getDefaultHeaders();
 
-        echo $this->apiCallUrl;
-
         switch ($postType) {
             case 'GET':
                 $this->buildGetCall($handle, $dataArray);
@@ -361,5 +359,4 @@ class RestApi
     {
         return $this->password;
     }
-
 }
