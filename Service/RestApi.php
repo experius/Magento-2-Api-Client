@@ -47,6 +47,25 @@ class RestApi
      */
     protected $apiKey;
 
+    /**
+     * @var
+     */
+    protected $consumerKey;
+
+    /**
+     * @var
+     */
+    protected $consumerSecret;
+
+    /**
+     * @var
+     */
+    protected $accesToken;
+
+    /**
+     * @var
+     */
+    protected $accesTokenSecret;
 
     /**
      * @throws \Exception
@@ -56,6 +75,38 @@ class RestApi
         if ($this->validateConfig()) {
             $this->getToken();
         }
+    }
+
+    /**
+     * @param mixed $consumerSecret
+     */
+    public function setConsumerSecret($consumerSecret)
+    {
+        $this->consumerSecret = $consumerSecret;
+    }
+
+    /**
+     * @param mixed $accesToken
+     */
+    public function setAccesToken($accesToken)
+    {
+        $this->accesToken = $accesToken;
+    }
+
+    /**
+     * @param mixed $accesTokenSecret
+     */
+    public function setAccesTokenSecret($accesTokenSecret)
+    {
+        $this->accesTokenSecret = $accesTokenSecret;
+    }
+
+    /**
+     * @param mixed $consumerKey
+     */
+    public function setConsumerKey($consumerKey)
+    {
+        $this->consumerKey = $consumerKey;
     }
 
     /**
@@ -77,7 +128,7 @@ class RestApi
     /**
      * @return mixed
      */
-    public function getUrl()
+    protected function getUrl()
     {
         $storeCode = '';
         if ($this->getStoreCode() != '') {
@@ -107,7 +158,7 @@ class RestApi
     {
         $integrations = ['admin', 'customer'];
 
-        if (!$this->token && in_array($integration, $integrations)) {
+        if (!$this->consumerKey && !$this->token && in_array($integration, $integrations)) {
             $data = array("username" => $this->getUsername(), "password" => $this->getPassword());
             if ($token = $this->call("integration/$integration/token", $data, "POST")) {
                 $this->token = $token;
@@ -124,8 +175,8 @@ class RestApi
         $headers = [];
         if ($this->token) {
             $headers[] = 'Authorization: Bearer ' . $this->token;
-            $headers['realtime-stock'] = 'Disable-RealtimeStock: true';
         }
+
         $headers = array_merge($headers, $this->extraHeaders);
         return $headers;
     }
@@ -161,6 +212,11 @@ class RestApi
                 $this->buildDeleteCall($handle, $dataArray);
                 break;
         }
+
+        if ($this->accesToken && $this->accesTokenSecret) {
+            $this->headers[] = $this->sign($this->apiCallUrl, $postType);
+        }
+
         curl_setopt($handle, CURLOPT_HTTPHEADER, $this->headers);
         curl_setopt($handle, CURLOPT_URL, $this->apiCallUrl);
 
@@ -202,9 +258,9 @@ class RestApi
     protected function validateConfig()
     {
         $missingConfig = array();
-        if (!$this->getUsername() && !$this->token) {
+        if (!$this->getUsername() && !$this->token && !$this->accesToken) {
             $missingConfig[] = 'username';
-        } elseif (!$this->getPassword() && !$this->token) {
+        } elseif (!$this->getPassword() && !$this->token && !$this->accesToken) {
             $missingConfig[] = 'password';
         } elseif (!$this->url) {
             $missingConfig[] = 'url';
@@ -319,7 +375,7 @@ class RestApi
     /**
      * @return mixed
      */
-    public function getApiKey()
+    protected function getApiKey()
     {
         return $this->apiKey;
     }
@@ -359,4 +415,77 @@ class RestApi
     {
         return $this->password;
     }
+
+    /**
+     * @param $url
+     * @param $method
+     * @return string
+     * @throws \Exception
+     */
+    protected function sign(
+        $url,
+        $method
+    ) : string
+    {
+        $urlParts = parse_url($url);
+        // Normalize the OAuth params for the base string
+        $normalizedHeaders = $this->headers;
+        sort($normalizedHeaders);
+        $oauthParams = [
+            'oauth_consumer_key' => $this->consumerKey,
+            'oauth_nonce' => base64_encode(random_bytes(32)),
+            'oauth_signature_method' => 'HMAC-SHA256',
+            'oauth_timestamp' => time(),
+            'oauth_token' => $this->accesToken
+        ];
+        // Create the base string
+        $signingUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . $urlParts['path'];
+        $paramString = $this->createParamString($urlParts['query'] ?? null, $oauthParams);
+        $baseString = strtoupper($method) . '&' . rawurlencode($signingUrl) . '&' . rawurlencode($paramString);
+        // Create the signature
+        $signatureKey = $this->consumerSecret . '&' . $this->accesTokenSecret;
+        $signature = base64_encode(hash_hmac('sha256', $baseString, $signatureKey, true));
+        return $this->createOAuthHeader($oauthParams, $signature);
+    }
+
+    /**
+     * @param string|null $query
+     * @param array $oauthParams
+     * @return string
+     */
+    protected function createParamString(?string $query, array $oauthParams): string
+    {
+        // Create the params string
+        $params = array_merge([], $oauthParams);
+        if (!empty($query)) {
+            foreach (explode('&', $query) as $paramToValue) {
+                $paramData = explode('=', $paramToValue);
+                if (count($paramData) === 2) {
+                    $params[rawurldecode($paramData[0])] = rawurldecode($paramData[1]);
+                }
+            }
+        }
+        ksort($params);
+        $paramString = '';
+        foreach ($params as $param => $value) {
+            $paramString .= rawurlencode($param) . '=' . rawurlencode($value) . '&';
+        }
+        return rtrim($paramString, '&');
+    }
+
+    /**
+     * @param array $oauthParams
+     * @param string $signature
+     * @return string
+     */
+    protected function createOAuthHeader(array $oauthParams, string $signature): string
+    {
+        // Create the OAuth header
+        $oauthHeader = "Authorization: Oauth ";
+        foreach ($oauthParams as $param => $value) {
+            $oauthHeader .= "$param=\"$value\",";
+        }
+        return $oauthHeader . "oauth_signature=\"$signature\"";
+    }
+
 }

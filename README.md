@@ -17,8 +17,14 @@ require __DIR__ . '/vendor/autoload.php';
 
 $service = new \Experius\Magento2ApiClient\Service\RestApi();
 
+// Oauth Signing
+$service->setConsumerKey('h157wlbjwyned8ethevky5178muu97o4');
+$service->setConsumerSecret('vjsq9fxn01h5qtdv9l5wsx8zyrwa4o30');
+$service->setAccesToken('o9v22v47jt3zc5l1hxed51ofaywd63vc');
+$service->setAccesTokenSecret('9rsslyrqsuw6ugauij0mpmdug8imc06g');
+
 // Integration Access Token
-$service->setToken('12341234123423423134123413243124');
+//$service->setToken('12341234123423423134123413243124');
 
 // Admin User Token Integration 
 //$service->setUsername('username');
